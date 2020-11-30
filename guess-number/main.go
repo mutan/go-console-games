@@ -23,23 +23,9 @@ var (
 
 func main() {
 	printHeading()
-	play()
-}
-
-func printHeading() {
-	fmt.Print(`
-  ____                     _   _                 _                       _ 
- / ___|_   _  ___  ___ ___| \ | |_   _ _ __ ___ | |__   ___ ____  __   _/ |
-| |  _| | | |/ _ \/ __/ __|  \| | | | | '_ ' _ \|  _ \ / _ \  __| \ \ / / |
-| |_| | |_| |  __/\__ \__ \ |\  | |_| | | | | | | |_) |  __/ |     \ V /| |
- \____|\____|\___||___/___/_| \_|\__,_|_| |_| |_|____/ \___|_|      \_/ |_|
-`)
-
-	fmt.Println(colorBlue + `
-               GuessNumber v1.0 by Akim Gubanov (c) 2020                    
-` + colorReset)
-
-	return
+	for {
+		play()
+	}
 }
 
 func play() {
@@ -76,7 +62,8 @@ func play() {
 		case guess < secretNumber:
 			fmt.Print("It's smaller than the secret number. Try again: ")
 		default:
-			fmt.Printf("Correct, stranger! You guessed right after "+colorRed+"%v"+colorReset+" attempts.", attempts)
+			fmt.Printf("Correct, stranger! You guessed right after "+colorRed+"%v"+colorReset+" attempts. Let's play one more time!\n\n", attempts)
+			return
 		}
 	}
 }
@@ -84,6 +71,22 @@ func play() {
 func generateSecretNumber() int {
 	rand.Seed(time.Now().UnixNano())
 	return rand.Intn(max-min) + min
+}
+
+func printHeading() {
+	fmt.Print(`
+  ____                     _   _                 _                       _ 
+ / ___|_   _  ___  ___ ___| \ | |_   _ _ __ ___ | |__   ___ ____  __   _/ |
+| |  _| | | |/ _ \/ __/ __|  \| | | | | '_ ' _ \|  _ \ / _ \  __| \ \ / / |
+| |_| | |_| |  __/\__ \__ \ |\  | |_| | | | | | | |_) |  __/ |     \ V /| |
+ \____|\____|\___||___/___/_| \_|\__,_|_| |_| |_|____/ \___|_|      \_/ |_|
+`)
+
+	fmt.Println(colorBlue + `
+               GuessNumber v1.0 by Akim Gubanov (c) 2020                    
+` + colorReset)
+
+	return
 }
 
 func init() {
