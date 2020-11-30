@@ -54,15 +54,13 @@ func play() {
 			continue
 		}
 
-		fmt.Printf("Your guess is %v. ", guess)
-
 		switch {
 		case guess > secretNumber:
-			fmt.Print("It is bigger than the secret number. Try again: ")
+			fmt.Print("> It is bigger than the secret number. Try again: ")
 		case guess < secretNumber:
-			fmt.Print("It's smaller than the secret number. Try again: ")
+			fmt.Print("> It's smaller than the secret number. Try again: ")
 		default:
-			fmt.Printf("Correct, stranger! You guessed right after "+colorRed+"%v"+colorReset+" attempts. Let's play one more time!\n\n", attempts)
+			fmt.Printf("> Correct, stranger! You guessed right after "+colorRed+"%v"+colorReset+" attempts.\n\nLet's play one more time!\n\n", attempts)
 			return
 		}
 	}
