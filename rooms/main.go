@@ -10,8 +10,9 @@ import (
 var scanner *bufio.Scanner
 
 type room struct {
-	text    string
-	choices []*choice
+	name        string
+	description string
+	choices     []*choice
 }
 
 type choice struct {
@@ -20,13 +21,16 @@ type choice struct {
 	nextRoom    *room
 }
 
+//type inventory
+
 func (room *room) addChoice(cmd string, description string, nextRoom *room) {
 	choice := &choice{cmd, description, nextRoom}
 	room.choices = append(room.choices, choice)
 }
 
 func (room *room) render() {
-	fmt.Println(room.text)
+	fmt.Printf("Вы входите в комнату: %s.\n", room.name)
+	fmt.Println(room.description)
 	if room.choices != nil {
 		for _, choice := range room.choices {
 			fmt.Printf("%s: %s\n", choice.cmd, choice.description)
@@ -48,6 +52,7 @@ func (room *room) play() {
 	room.render()
 	if room.choices != nil {
 		scanner.Scan()
+		fmt.Println()
 		room.executeCmd(scanner.Text()).play()
 	}
 }
@@ -56,29 +61,29 @@ func main() {
 	printHeading()
 	scanner = bufio.NewScanner(os.Stdin)
 
-	start := room{text: "Вы обнаруживаете себя в комнате. Сзади - входная дверь."}
+	hall := room{name: "Холл", description: "Вы обнаруживаете себя в комнате. Сзади - входная дверь."}
 
-	darkRoom := room{text: "Темная комната. Вы ничего не видите."}
+	darkRoom := room{name: "Темная комната", description: "Темная комната. Вы ничего не видите."}
 
-	darkRoomLit := room{text: "Темная комната теперь освещена."}
+	darkRoomLit := room{name: "Темная комната освещена", description: "Темная комната теперь освещена."}
 
-	grue := room{text: "Вас съедает чудище из темноты."}
+	grue := room{name: "Чудище", description: "Вас съедает чудище из темноты."}
 
-	trap := room{text: "Это ловушка."}
+	trap := room{name: "Ловушка", description: "Это ловушка."}
 
-	treasure := room{text: "Комната, полная сокровищ."}
+	treasure := room{name: "Сокровищница", description: "Комната, полная сокровищ."}
 
-	start.addChoice("N", "На север", &darkRoom)
-	start.addChoice("S", "На юг", &darkRoom)
-	start.addChoice("E", "На восток", &trap)
+	hall.addChoice("N", "На север", &darkRoom)
+	hall.addChoice("S", "На юг", &darkRoom)
+	hall.addChoice("E", "На восток", &trap)
 
 	darkRoom.addChoice("S", "Назад на юг", &grue)
 	darkRoom.addChoice("O", "Включить фонарь", &darkRoomLit)
 
 	darkRoomLit.addChoice("N", "На север", &treasure)
-	darkRoomLit.addChoice("S", "На юг", &start)
+	darkRoomLit.addChoice("S", "На юг", &hall)
 
-	start.play()
+	hall.play()
 
 	fmt.Println("The End.")
 }
