@@ -9,7 +9,7 @@ import (
 
 var scanner *bufio.Scanner
 
-type storyNode struct {
+type room struct {
 	text    string
 	choices []*choice
 }
@@ -17,38 +17,38 @@ type storyNode struct {
 type choice struct {
 	cmd         string
 	description string
-	nextNode    *storyNode
+	nextRoom    *room
 }
 
-func (node *storyNode) addChoice(cmd string, description string, nextNode *storyNode) {
-	choice := &choice{cmd, description, nextNode}
-	node.choices = append(node.choices, choice)
+func (room *room) addChoice(cmd string, description string, nextRoom *room) {
+	choice := &choice{cmd, description, nextRoom}
+	room.choices = append(room.choices, choice)
 }
 
-func (node *storyNode) render() {
-	fmt.Println(node.text)
-	if node.choices != nil {
-		for _, choice := range node.choices {
+func (room *room) render() {
+	fmt.Println(room.text)
+	if room.choices != nil {
+		for _, choice := range room.choices {
 			fmt.Printf("%s: %s\n", choice.cmd, choice.description)
 		}
 	}
 }
 
-func (node *storyNode) executeCmd(cmd string) *storyNode {
-	for _, choice := range node.choices {
+func (room *room) executeCmd(cmd string) *room {
+	for _, choice := range room.choices {
 		if strings.ToLower(choice.cmd) == strings.ToLower(cmd) {
-			return choice.nextNode
+			return choice.nextRoom
 		}
 	}
 	fmt.Println("Sorry, I didn't understand that.")
-	return node
+	return room
 }
 
-func (node *storyNode) play() {
-	node.render()
-	if node.choices != nil {
+func (room *room) play() {
+	room.render()
+	if room.choices != nil {
 		scanner.Scan()
-		node.executeCmd(scanner.Text()).play()
+		room.executeCmd(scanner.Text()).play()
 	}
 }
 
@@ -56,17 +56,17 @@ func main() {
 	printHeading()
 	scanner = bufio.NewScanner(os.Stdin)
 
-	start := storyNode{text: "Вы обнаруживаете себя в комнате. Сзади - входная дверь."}
+	start := room{text: "Вы обнаруживаете себя в комнате. Сзади - входная дверь."}
 
-	darkRoom := storyNode{text: "Темная комната. Вы ничего не видите."}
+	darkRoom := room{text: "Темная комната. Вы ничего не видите."}
 
-	darkRoomLit := storyNode{text: "Темная комната теперь освещена."}
+	darkRoomLit := room{text: "Темная комната теперь освещена."}
 
-	grue := storyNode{text: "Вас съедает чудище из темноты."}
+	grue := room{text: "Вас съедает чудище из темноты."}
 
-	trap := storyNode{text: "Это ловушка."}
+	trap := room{text: "Это ловушка."}
 
-	treasure := storyNode{text: "Комната, полная сокровищ."}
+	treasure := room{text: "Комната, полная сокровищ."}
 
 	start.addChoice("N", "На север", &darkRoom)
 	start.addChoice("S", "На юг", &darkRoom)
