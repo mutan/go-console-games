@@ -22,44 +22,44 @@ var flags map[string]bool = map[string]bool{
 type room struct {
 	name        string
 	description string
-	choices     []*choice
+	moves       []*move
 }
 
-type choice struct {
+type move struct {
 	cmd         string
 	description string
 	nextRoom    *room
 }
 
-func (room *room) addChoice(cmd string, description string, nextRoom *room) {
-	choice := &choice{cmd, description, nextRoom}
-	room.choices = append(room.choices, choice)
+func (room *room) addMove(cmd string, description string, nextRoom *room) {
+	move := &move{cmd, description, nextRoom}
+	room.moves = append(room.moves, move)
 }
 
-func (room *room) removeChoice(cmd string) {
-	var newChoices []*choice
-	for _, choice := range room.choices {
-		if choice.cmd != cmd {
-			newChoices = append(newChoices, choice)
+func (room *room) removeMove(cmd string) {
+	var newMoves []*move
+	for _, move := range room.moves {
+		if move.cmd != cmd {
+			newMoves = append(newMoves, move)
 		}
 	}
-	room.choices = newChoices
+	room.moves = newMoves
 }
 
 func (room *room) render() {
 	fmt.Printf("Вы входите в комнату: %s.\n", room.name)
 	fmt.Println(room.description)
-	if room.choices != nil {
-		for _, choice := range room.choices {
-			fmt.Printf("%s: %s\n", choice.cmd, choice.description)
+	if room.moves != nil {
+		for _, move := range room.moves {
+			fmt.Printf("%s: %s\n", move.cmd, move.description)
 		}
 	}
 }
 
 func (room *room) executeCmd(cmd string) *room {
-	for _, choice := range room.choices {
-		if strings.ToLower(choice.cmd) == strings.ToLower(cmd) {
-			return choice.nextRoom
+	for _, move := range room.moves {
+		if strings.ToLower(move.cmd) == strings.ToLower(cmd) {
+			return move.nextRoom
 		}
 	}
 	fmt.Println("Sorry, I didn't understand that.")
@@ -68,7 +68,7 @@ func (room *room) executeCmd(cmd string) *room {
 
 func play(room *room) {
 	room.render()
-	if room.choices != nil {
+	if room.moves != nil {
 		scanner.Scan()
 		fmt.Println()
 		play(room.executeCmd(scanner.Text()))
@@ -91,15 +91,15 @@ func main() {
 
 	treasure := room{name: "Сокровищница", description: "Комната, полная сокровищ."}
 
-	hall.addChoice("N", "На север", &darkRoom)
-	hall.addChoice("S", "На юг", &darkRoom)
-	hall.addChoice("E", "На восток", &trap)
+	hall.addMove("N", "На север", &darkRoom)
+	hall.addMove("S", "На юг", &darkRoom)
+	hall.addMove("E", "На восток", &trap)
 
-	darkRoom.addChoice("S", "Назад на юг", &grue)
-	darkRoom.addChoice("O", "Включить фонарь", &darkRoomLit)
+	darkRoom.addMove("S", "Назад на юг", &grue)
+	darkRoom.addMove("O", "Включить фонарь", &darkRoomLit)
 
-	darkRoomLit.addChoice("N", "На север", &treasure)
-	darkRoomLit.addChoice("S", "На юг", &hall)
+	darkRoomLit.addMove("N", "На север", &treasure)
+	darkRoomLit.addMove("S", "На юг", &hall)
 
 	play(&hall)
 
