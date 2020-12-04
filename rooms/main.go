@@ -1,3 +1,8 @@
+/*
+Rooms diagram
+https://lucid.app/lucidchart/invitations/accept/a566a6b2-36d2-4fe8-b11d-9d6d99af9add
+*/
+
 package main
 
 import (
@@ -8,6 +13,11 @@ import (
 )
 
 var scanner *bufio.Scanner
+
+var flags map[string]bool = map[string]bool{
+	"check_pockets":  false,
+	"find_safe_code": false,
+}
 
 type room struct {
 	name        string
@@ -21,11 +31,19 @@ type choice struct {
 	nextRoom    *room
 }
 
-//type inventory
-
 func (room *room) addChoice(cmd string, description string, nextRoom *room) {
 	choice := &choice{cmd, description, nextRoom}
 	room.choices = append(room.choices, choice)
+}
+
+func (room *room) removeChoice(cmd string) {
+	var newChoices []*choice
+	for _, choice := range room.choices {
+		if choice.cmd != cmd {
+			newChoices = append(newChoices, choice)
+		}
+	}
+	room.choices = newChoices
 }
 
 func (room *room) render() {
@@ -48,12 +66,12 @@ func (room *room) executeCmd(cmd string) *room {
 	return room
 }
 
-func (room *room) play() {
+func play(room *room) {
 	room.render()
 	if room.choices != nil {
 		scanner.Scan()
 		fmt.Println()
-		room.executeCmd(scanner.Text()).play()
+		play(room.executeCmd(scanner.Text()))
 	}
 }
 
@@ -83,7 +101,7 @@ func main() {
 	darkRoomLit.addChoice("N", "На север", &treasure)
 	darkRoomLit.addChoice("S", "На юг", &hall)
 
-	hall.play()
+	play(&hall)
 
 	fmt.Println("The End.")
 }
