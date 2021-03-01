@@ -1,1 +1,1 @@
-# go-console-games
+make run_rooms
