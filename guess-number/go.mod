@@ -1,3 +1,3 @@
 module github.com/mutan/go-console-games/guess-number
 
-go 1.15
+go 1.16
